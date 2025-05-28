@@ -1,0 +1,325 @@
+{% extends "base.html" %}
+
+{% block title %}تسجيل الدخول - نظام الإعلانات التعليمية{% endblock %}
+
+{% block content %}
+<style>
+    .login-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 70vh;
+    }
+
+    .login-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 3rem;
+        box-shadow: 0 15px 50px rgba(0,0,0,0.1);
+        width: 100%;
+        max-width: 450px;
+        text-align: center;
+    }
+
+    .login-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #4a5568;
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+    }
+
+    .login-icon {
+        font-size: 2.5rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+        text-align: right;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: #4a5568;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 1rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: rgba(255, 255, 255, 0.9);
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        transform: translateY(-2px);
+    }
+
+    .login-btn {
+        width: 100%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        margin-top: 1rem;
+    }
+
+    .login-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+    }
+
+    .demo-accounts {
+        margin-top: 2rem;
+        padding: 1.5rem;
+        background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+        border-radius: 15px;
+        text-align: right;
+    }
+
+    .demo-title {
+        font-weight: 600;
+        color: #4a5568;
+        margin-bottom: 1rem;
+        text-align: center;
+    }
+
+    .demo-account {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem;
+        margin-bottom: 0.5rem;
+        background: white;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+    }
+
+    .demo-account:hover {
+        border-color: #667eea;
+        transform: translateX(-5px);
+    }
+
+    .demo-role {
+        font-weight: 600;
+        color: #4a5568;
+    }
+
+    .demo-credentials {
+        font-size: 0.9rem;
+        color: #718096;
+    }
+
+    .back-link {
+        display: inline-block;
+        margin-top: 2rem;
+        color: #667eea;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s ease;
+    }
+
+    .back-link:hover {
+        color: #764ba2;
+    }
+
+    .input-icon {
+        position: relative;
+    }
+
+    .input-icon::before {
+        content: attr(data-icon);
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #a0aec0;
+        font-size: 1.2rem;
+        z-index: 1;
+    }
+
+    .input-icon .form-control {
+        padding-left: 3rem;
+    }
+
+    @media (max-width: 768px) {
+        .login-card {
+            margin: 1rem;
+            padding: 2rem;
+        }
+        
+        .demo-account {
+            flex-direction: column;
+            text-align: center;
+            gap: 0.5rem;
+        }
+    }
+</style>
+
+<div class="login-container">
+    <div class="login-card">
+        <h1 class="login-title">
+            <span class="login-icon">🔐</span>
+            تسجيل الدخول
+        </h1>
+
+        <form method="POST" action="{{ url_for('login') }}">
+            <div class="form-group">
+                <label class="form-label">البريد الإلكتروني</label>
+                <div class="input-icon" data-icon="📧">
+                    <input type="email" name="email" class="form-control" required 
+                           placeholder="أدخل بريدك الإلكتروني">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">كلمة المرور</label>
+                <div class="input-icon" data-icon="🔒">
+                    <input type="password" name="password" class="form-control" required 
+                           placeholder="أدخل كلمة المرور">
+                </div>
+            </div>
+
+            <button type="submit" class="login-btn">
+                دخول إلى النظام
+            </button>
+        </form>
+
+        <div class="demo-accounts">
+            <h4 class="demo-title">🎯 حسابات تجريبية للاختبار</h4>
+            
+            <div class="demo-account" onclick="fillCredentials('dean@university.edu', 'dean123')">
+                <div class="demo-role">🎓 عميد الكلية</div>
+                <div class="demo-credentials">dean@university.edu / dean123</div>
+            </div>
+            
+            <div class="demo-account" onclick="fillCredentials('head@university.edu', 'head123')">
+                <div class="demo-role">👨‍💼 رئيس القسم</div>
+                <div class="demo-credentials">head@university.edu / head123</div>
+            </div>
+            
+            <div class="demo-account" onclick="fillCredentials('teacher@university.edu', 'teacher123')">
+                <div class="demo-role">👩‍🏫 معلم</div>
+                <div class="demo-credentials">teacher@university.edu / teacher123</div>
+            </div>
+            
+            <div class="demo-account" onclick="fillCredentials('student@university.edu', 'student123')">
+                <div class="demo-role">👨‍🎓 طالب</div>
+                <div class="demo-credentials">student@university.edu / student123</div>
+            </div>
+        </div>
+
+        <a href="{{ url_for('home') }}" class="back-link">
+            ← العودة للصفحة الرئيسية
+        </a>
+    </div>
+</div>
+
+<script>
+    function fillCredentials(email, password) {
+        document.querySelector('input[name="email"]').value = email;
+        document.querySelector('input[name="password"]').value = password;
+        
+        // إضافة تأثير بصري
+        const emailInput = document.querySelector('input[name="email"]');
+        const passwordInput = document.querySelector('input[name="password"]');
+        
+        emailInput.style.background = '#e6fffa';
+        passwordInput.style.background = '#e6fffa';
+        
+        setTimeout(() => {
+            emailInput.style.background = 'rgba(255, 255, 255, 0.9)';
+            passwordInput.style.background = 'rgba(255, 255, 255, 0.9)';
+        }, 1000);
+    }
+
+    // تأثيرات تفاعلية للنموذج
+    document.addEventListener('DOMContentLoaded', function() {
+        const inputs = document.querySelectorAll('.form-control');
+        
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'scale(1.02)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'scale(1)';
+            });
+        });
+
+        // تأثير الكتابة
+        inputs.forEach(input => {
+            input.addEventListener('input', function() {
+                if (this.value.length > 0) {
+                    this.style.borderColor = '#48bb78';
+                } else {
+                    this.style.borderColor = '#e2e8f0';
+                }
+            });
+        });
+
+        // تأثير إرسال النموذج
+        const form = document.querySelector('form');
+        form.addEventListener('submit', function(e) {
+            const submitBtn = document.querySelector('.login-btn');
+            submitBtn.innerHTML = '🔄 جاري تسجيل الدخول...';
+            submitBtn.disabled = true;
+        });
+    });
+
+    // تأثير الجسيمات في الخلفية
+    function createParticle() {
+        const particle = document.createElement('div');
+        particle.style.position = 'fixed';
+        particle.style.width = '4px';
+        particle.style.height = '4px';
+        particle.style.background = 'rgba(102, 126, 234, 0.3)';
+        particle.style.borderRadius = '50%';
+        particle.style.pointerEvents = 'none';
+        particle.style.zIndex = '-1';
+        
+        const x = Math.random() * window.innerWidth;
+        const y = Math.random() * window.innerHeight;
+        
+        particle.style.left = x + 'px';
+        particle.style.top = y + 'px';
+        
+        document.body.appendChild(particle);
+        
+        const animation = particle.animate([
+            { transform: 'translateY(0px)', opacity: 0.3 },
+            { transform: 'translateY(-100px)', opacity: 0 }
+        ], {
+            duration: 3000,
+            easing: 'ease-out'
+        });
+        
+        animation.onfinish = () => particle.remove();
+    }
+
+    // إنشاء جسيمات بشكل دوري
+    setInterval(createParticle, 2000);
+</script>
+{% endblock %}

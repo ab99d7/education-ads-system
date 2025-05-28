@@ -1,0 +1,678 @@
+{% extends "base.html" %}
+
+{% block title %}إدارة المستخدمين - نظام الإعلانات التعليمية{% endblock %}
+
+{% block content %}
+<style>
+    .management-header {
+        background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 15px;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+
+    .header-title {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .header-subtitle {
+        font-size: 1.1rem;
+        opacity: 0.9;
+    }
+
+    .filters-section {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    }
+
+    .filters-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        align-items: end;
+    }
+
+    .search-box {
+        position: relative;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 0.75rem 1rem 0.75rem 3rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 25px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .search-input:focus {
+        outline: none;
+        border-color: #48bb78;
+        box-shadow: 0 0 0 3px rgba(72, 187, 120, 0.1);
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #a0aec0;
+        font-size: 1.2rem;
+    }
+
+    .users-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        padding: 1.5rem;
+        border-radius: 15px;
+        text-align: center;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-3px);
+    }
+
+    .stat-icon {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-number {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 0.25rem;
+    }
+
+    .stat-label {
+        color: #4a5568;
+        font-weight: 500;
+        font-size: 0.9rem;
+    }
+
+    .users-table-container {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    }
+
+    .table-header {
+        background: #f7fafc;
+        padding: 1rem 1.5rem;
+        border-bottom: 2px solid #e2e8f0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .table-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #4a5568;
+    }
+
+    .table-actions {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .export-btn {
+        background: #4299e1;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+    }
+
+    .export-btn:hover {
+        background: #3182ce;
+        transform: translateY(-1px);
+    }
+
+    .users-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .users-table th {
+        background: #f7fafc;
+        padding: 1rem;
+        text-align: right;
+        font-weight: 600;
+        color: #4a5568;
+        border-bottom: 1px solid #e2e8f0;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+
+    .users-table td {
+        padding: 1rem;
+        border-bottom: 1px solid #e2e8f0;
+        color: #4a5568;
+        vertical-align: middle;
+    }
+
+    .users-table tr:hover {
+        background: #f7fafc;
+    }
+
+    .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+        font-size: 1.2rem;
+    }
+
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .user-details {
+        flex: 1;
+    }
+
+    .user-name {
+        font-weight: 600;
+        color: #4a5568;
+        margin-bottom: 0.25rem;
+    }
+
+    .user-email {
+        font-size: 0.9rem;
+        color: #718096;
+    }
+
+    .role-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        text-align: center;
+    }
+
+    .role-dean { background: #ffd700; color: #8b4513; }
+    .role-head { background: #87ceeb; color: #2f4f4f; }
+    .role-teacher { background: #98fb98; color: #006400; }
+    .role-student { background: #ffa07a; color: #8b0000; }
+
+    .status-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+
+    .status-active { background: #c6f6d5; color: #2f855a; }
+    .status-inactive { background: #fed7d7; color: #c53030; }
+
+    .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+        justify-content: center;
+    }
+
+    .btn-icon {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-edit {
+        background: #bee3f8;
+        color: #2b6cb0;
+    }
+
+    .btn-edit:hover {
+        background: #90cdf4;
+        transform: scale(1.1);
+    }
+
+    .btn-delete {
+        background: #fed7d7;
+        color: #c53030;
+    }
+
+    .btn-delete:hover {
+        background: #feb2b2;
+        transform: scale(1.1);
+    }
+
+    .btn-view {
+        background: #c6f6d5;
+        color: #2f855a;
+    }
+
+    .btn-view:hover {
+        background: #9ae6b4;
+        transform: scale(1.1);
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 1.5rem;
+        background: #f7fafc;
+    }
+
+    .page-btn {
+        padding: 0.5rem 1rem;
+        border: 1px solid #e2e8f0;
+        background: white;
+        color: #4a5568;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .page-btn:hover {
+        background: #48bb78;
+        color: white;
+        border-color: #48bb78;
+    }
+
+    .page-btn.active {
+        background: #48bb78;
+        color: white;
+        border-color: #48bb78;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: #718096;
+    }
+
+    .empty-icon {
+        font-size: 5rem;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+
+    .empty-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: #4a5568;
+    }
+
+    @media (max-width: 768px) {
+        .filters-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .users-stats {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .table-header {
+            flex-direction: column;
+            gap: 1rem;
+            text-align: center;
+        }
+        
+        .users-table {
+            font-size: 0.9rem;
+        }
+        
+        .users-table th,
+        .users-table td {
+            padding: 0.75rem 0.5rem;
+        }
+        
+        .user-info {
+            flex-direction: column;
+            text-align: center;
+            gap: 0.5rem;
+        }
+        
+        .action-buttons {
+            flex-direction: column;
+        }
+    }
+</style>
+
+<div class="management-header">
+    <div class="header-title">👥 إدارة المستخدمين</div>
+    <div class="header-subtitle">إدارة شاملة لجميع مستخدمي النظام</div>
+</div>
+
+<div class="filters-section">
+    <div class="filters-grid">
+        <div class="search-box">
+            <input type="text" class="search-input" placeholder="البحث عن مستخدم..." id="searchInput">
+            <span class="search-icon">🔍</span>
+        </div>
+        
+        <div class="form-group">
+            <select class="form-control" id="roleFilter">
+                <option value="">جميع الأدوار</option>
+                <option value="عميد">عميد</option>
+                <option value="رئيس قسم">رئيس قسم</option>
+                <option value="معلم">معلم</option>
+                <option value="طالب">طالب</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <select class="form-control" id="departmentFilter">
+                <option value="">جميع الأقسام</option>
+                <option value="إدارة الكلية">إدارة الكلية</option>
+                <option value="قسم علوم الحاسب">قسم علوم الحاسب</option>
+                <option value="قسم الرياضيات">قسم الرياضيات</option>
+                <option value="قسم الفيزياء">قسم الفيزياء</option>
+            </select>
+        </div>
+        
+        <button class="btn btn-success" onclick="exportUsers()">
+            📊 تصدير البيانات
+        </button>
+    </div>
+</div>
+
+<div class="users-stats">
+    <div class="stat-card">
+        <div class="stat-icon">🎓</div>
+        <div class="stat-number" style="color: #8b4513;">{{ users|selectattr('2', 'equalto', 'عميد')|list|length }}</div>
+        <div class="stat-label">عمداء</div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-icon">👨‍💼</div>
+        <div class="stat-number" style="color: #2f4f4f;">{{ users|selectattr('2', 'equalto', 'رئيس قسم')|list|length }}</div>
+        <div class="stat-label">رؤساء أقسام</div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-icon">👩‍🏫</div>
+        <div class="stat-number" style="color: #006400;">{{ users|selectattr('2', 'equalto', 'معلم')|list|length }}</div>
+        <div class="stat-label">معلمين</div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-icon">👨‍🎓</div>
+        <div class="stat-number" style="color: #8b0000;">{{ users|selectattr('2', 'equalto', 'طالب')|list|length }}</div>
+        <div class="stat-label">طلاب</div>
+    </div>
+</div>
+
+<div class="users-table-container">
+    <div class="table-header">
+        <div class="table-title">📋 قائمة المستخدمين ({{ users|length }} مستخدم)</div>
+        <div class="table-actions">
+            <button class="export-btn" onclick="printTable()">🖨️ طباعة</button>
+            <button class="export-btn" onclick="refreshData()">🔄 تحديث</button>
+        </div>
+    </div>
+    
+    {% if users %}
+    <table class="users-table" id="usersTable">
+        <thead>
+            <tr>
+                <th>المستخدم</th>
+                <th>الدور</th>
+                <th>القسم</th>
+                <th>رقم الهاتف</th>
+                <th>تاريخ التسجيل</th>
+                <th>الحالة</th>
+                {% if user.role == 'عميد' %}
+                <th>الإجراءات</th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for u in users %}
+            <tr class="user-row" data-role="{{ u[2] }}" data-department="{{ u[4] or '' }}" data-name="{{ u[1] }}" data-email="{{ u[3] }}">
+                <td>
+                    <div class="user-info">
+                        <div class="user-avatar">{{ u[1][0] }}</div>
+                        <div class="user-details">
+                            <div class="user-name">{{ u[1] }}</div>
+                            <div class="user-email">{{ u[3] }}</div>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <span class="role-badge role-{{ u[2]|replace('عميد', 'dean')|replace('رئيس قسم', 'head')|replace('معلم', 'teacher')|replace('طالب', 'student') }}">
+                        {{ u[2] }}
+                    </span>
+                </td>
+                <td>{{ u[4] or 'غير محدد' }}</td>
+                <td>{{ u[5] or 'غير محدد' }}</td>
+                <td>{{ u[6][:10] if u[6] else 'غير محدد' }}</td>
+                <td>
+                    <span class="status-badge status-active">نشط</span>
+                </td>
+                {% if user.role == 'عميد' %}
+                <td>
+                    <div class="action-buttons">
+                        <button class="btn-icon btn-view" title="عرض التفاصيل" onclick="viewUser('{{ u[0] }}')">
+                            👁️
+                        </button>
+                        <button class="btn-icon btn-edit" title="تعديل" onclick="editUser('{{ u[0] }}')">
+                            ✏️
+                        </button>
+                        {% if u[0] != user.id %}
+                        <a href="{{ url_for('delete_user', user_id=u[0]) }}" 
+                           class="btn-icon btn-delete" 
+                           title="حذف"
+                           onclick="return confirm('هل أنت متأكد من حذف هذا المستخدم؟\n\nالمستخدم: {{ u[1] }}\nالدور: {{ u[2] }}')">
+                            🗑️
+                        </a>
+                        {% endif %}
+                    </div>
+                </td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    <div class="pagination">
+        <button class="page-btn">← السابق</button>
+        <button class="page-btn active">1</button>
+        <button class="page-btn">2</button>
+        <button class="page-btn">3</button>
+        <button class="page-btn">التالي →</button>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">👥</div>
+        <div class="empty-title">لا توجد مستخدمين</div>
+        <p>لم يتم العثور على أي مستخدمين في النظام</p>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    // البحث والتصفية
+    document.getElementById('searchInput').addEventListener('input', filterUsers);
+    document.getElementById('roleFilter').addEventListener('change', filterUsers);
+    document.getElementById('departmentFilter').addEventListener('change', filterUsers);
+
+    function filterUsers() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        const roleFilter = document.getElementById('roleFilter').value;
+        const departmentFilter = document.getElementById('departmentFilter').value;
+        
+        const rows = document.querySelectorAll('.user-row');
+        
+        rows.forEach(row => {
+            const name = row.dataset.name.toLowerCase();
+            const email = row.dataset.email.toLowerCase();
+            const role = row.dataset.role;
+            const department = row.dataset.department;
+            
+            const matchesSearch = name.includes(searchTerm) || email.includes(searchTerm);
+            const matchesRole = !roleFilter || role === roleFilter;
+            const matchesDepartment = !departmentFilter || department === departmentFilter;
+            
+            if (matchesSearch && matchesRole && matchesDepartment) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+        
+        updateResultsCount();
+    }
+
+    function updateResultsCount() {
+        const visibleRows = document.querySelectorAll('.user-row[style=""]').length;
+        const totalRows = document.querySelectorAll('.user-row').length;
+        const tableTitle = document.querySelector('.table-title');
+        tableTitle.textContent = `📋 قائمة المستخدمين (${visibleRows} من ${totalRows} مستخدم)`;
+    }
+
+    // تصدير البيانات
+    function exportUsers() {
+        const users = [];
+        const rows = document.querySelectorAll('.user-row[style=""]');
+        
+        rows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            users.push({
+                name: row.dataset.name,
+                role: row.dataset.role,
+                department: row.dataset.department,
+                email: row.dataset.email
+            });
+        });
+        
+        const csvContent = "data:text/csv;charset=utf-8," 
+            + "الاسم,الدور,القسم,البريد الإلكتروني\n"
+            + users.map(u => `${u.name},${u.role},${u.department},${u.email}`).join("\n");
+        
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "users_export.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    // طباعة الجدول
+    function printTable() {
+        const printWindow = window.open('', '_blank');
+        const tableHTML = document.querySelector('.users-table-container').outerHTML;
+        
+        printWindow.document.write(`
+            <html>
+                <head>
+                    <title>قائمة المستخدمين</title>
+                    <style>
+                        body { font-family: 'Cairo', sans-serif; direction: rtl; }
+                        table { width: 100%; border-collapse: collapse; }
+                        th, td { border: 1px solid #ddd; padding: 8px; text-align: right; }
+                        th { background-color: #f2f2f2; }
+                        .role-badge { padding: 2px 8px; border-radius: 10px; }
+                        .action-buttons { display: none; }
+                    </style>
+                </head>
+                <body>
+                    <h1>قائمة المستخدمين - نظام الإعلانات التعليمية</h1>
+                    ${tableHTML}
+                </body>
+            </html>
+        `);
+        
+        printWindow.document.close();
+        printWindow.print();
+    }
+
+    // تحديث البيانات
+    function refreshData() {
+        location.reload();
+    }
+
+    // عرض تفاصيل المستخدم
+    function viewUser(userId) {
+        alert('عرض تفاصيل المستخدم رقم: ' + userId);
+        // يمكن إضافة modal أو صفحة منفصلة هنا
+    }
+
+    // تعديل المستخدم
+    function editUser(userId) {
+        alert('تعديل المستخدم رقم: ' + userId);
+        // يمكن إضافة modal أو صفحة منفصلة هنا
+    }
+
+    // تأثيرات تفاعلية
+    document.addEventListener('DOMContentLoaded', function() {
+        // تأثير العد التصاعدي للإحصائيات
+        const statNumbers = document.querySelectorAll('.stat-number');
+        statNumbers.forEach(stat => {
+            const finalNumber = parseInt(stat.textContent);
+            if (!isNaN(finalNumber)) {
+                let currentNumber = 0;
+                const increment = finalNumber / 20;
+                const timer = setInterval(() => {
+                    currentNumber += increment;
+                    if (currentNumber >= finalNumber) {
+                        stat.textContent = finalNumber;
+                        clearInterval(timer);
+                    } else {
+                        stat.textContent = Math.floor(currentNumber);
+                    }
+                }, 50);
+            }
+        });
+
+        // تأثير hover للصفوف
+        const rows = document.querySelectorAll('.user-row');
+        rows.forEach(row => {
+            row.addEventListener('mouseenter', function() {
+                this.style.backgroundColor = '#f7fafc';
+                this.style.transform = 'scale(1.01)';
+            });
+            
+            row.addEventListener('mouseleave', function() {
+                this.style.backgroundColor = '';
+                this.style.transform = 'scale(1)';
+            });
+        });
+    });
+</script>
+{% endblock %}

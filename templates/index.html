@@ -1,0 +1,487 @@
+{% extends "base.html" %}
+
+{% block title %}الصفحة الرئيسية - نظام الإعلانات التعليمية{% endblock %}
+
+{% block content %}
+<style>
+    .hero-section {
+        position: relative;
+        height: 80vh;
+        overflow: hidden;
+        border-radius: 20px;
+        margin-bottom: 3rem;
+    }
+
+    .video-container {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #000;
+        border-radius: 20px;
+    }
+
+    .scene {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        transition: opacity 2s ease-in-out;
+        background-size: cover;
+        background-position: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        text-align: center;
+        border-radius: 20px;
+    }
+
+    .scene.active {
+        opacity: 1;
+    }
+
+    .scene-1 {
+        background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), 
+                    url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><rect fill="%23654321" width="1200" height="800"/><rect fill="%238B4513" x="0" y="600" width="1200" height="200"/><circle fill="%23FFD700" cx="600" cy="150" r="80"/><rect fill="%232F4F4F" x="400" y="300" width="400" height="200" rx="20"/><text x="600" y="420" text-anchor="middle" fill="white" font-size="24" font-family="serif">UNIVERSITY HALL</text></svg>');
+    }
+
+    .scene-2 {
+        background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), 
+                    url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><rect fill="%23F5F5DC" width="1200" height="800"/><rect fill="%238B4513" x="100" y="100" width="200" height="600"/><rect fill="%238B4513" x="900" y="100" width="200" height="600"/><rect fill="%23FFFFFF" x="400" y="200" width="400" height="300"/><text x="600" y="360" text-anchor="middle" fill="black" font-size="20" font-family="serif">MODERN OFFICE</text></svg>');
+    }
+
+    .scene-3 {
+        background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), 
+                    url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><rect fill="%2387CEEB" width="1200" height="800"/><rect fill="%23FFFFE0" x="50" y="150" width="1100" height="500"/><rect fill="%23FFFFFF" x="200" y="250" width="600" height="200"/><text x="500" y="360" text-anchor="middle" fill="black" font-size="18" font-family="serif">BRIGHT CLASSROOM</text></svg>');
+    }
+
+    .scene-4 {
+        background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), 
+                    url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><rect fill="%2332CD32" width="1200" height="800"/><circle fill="%23228B22" cx="200" cy="200" r="100"/><circle fill="%23228B22" cx="600" cy="150" r="120"/><circle fill="%23228B22" cx="1000" cy="250" r="90"/><rect fill="%236B8E23" x="0" y="600" width="1200" height="200"/><text x="600" y="700" text-anchor="middle" fill="white" font-size="20" font-family="serif">GREEN CAMPUS</text></svg>');
+    }
+
+    .character {
+        position: absolute;
+        bottom: 20%;
+        font-size: 4rem;
+        animation: breathe 3s ease-in-out infinite;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    @keyframes breathe {
+        0%, 100% { transform: translateX(-50%) scale(1); }
+        50% { transform: translateX(-50%) scale(1.05); }
+    }
+
+    .text-overlay {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 3rem;
+        font-weight: bold;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+        opacity: 0;
+        animation: fadeInOut 4s ease-in-out;
+        white-space: nowrap;
+    }
+
+    @keyframes fadeInOut {
+        0%, 100% { opacity: 0; transform: translate(-50%, -50%) translateY(20px); }
+        20%, 80% { opacity: 1; transform: translate(-50%, -50%) translateY(0); }
+    }
+
+    .inspirational-text {
+        position: absolute;
+        bottom: 10%;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 1.5rem;
+        font-style: italic;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+        opacity: 0;
+        animation: slideUp 3s ease-in-out 1s forwards;
+    }
+
+    @keyframes slideUp {
+        0% { opacity: 0; transform: translateX(-50%) translateY(30px); }
+        100% { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+
+    .scene-title {
+        position: absolute;
+        top: 10%;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 2rem;
+        font-weight: bold;
+        color: #FFD700;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+        opacity: 0;
+        animation: titleFade 3s ease-in-out 0.5s forwards;
+    }
+
+    @keyframes titleFade {
+        0% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+        100% { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+
+    .progress-bar {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #FFD700, #FFA500);
+        transition: width 0.5s ease;
+        border-radius: 0 0 20px 20px;
+    }
+
+    .controls {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1000;
+    }
+
+    .control-btn {
+        background: rgba(255,255,255,0.2);
+        border: 2px solid rgba(255,255,255,0.5);
+        color: white;
+        padding: 10px 20px;
+        margin: 5px;
+        border-radius: 25px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
+    }
+
+    .control-btn:hover {
+        background: rgba(255,255,255,0.3);
+        border-color: rgba(255,255,255,0.8);
+        transform: translateY(-2px);
+    }
+
+    .auth-section {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+
+    .auth-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    }
+
+    .auth-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #4a5568;
+        margin-bottom: 1.5rem;
+        text-align: center;
+    }
+
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-top: 3rem;
+    }
+
+    .feature-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 2rem;
+        text-align: center;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .feature-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+
+    .feature-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #4a5568;
+        margin-bottom: 1rem;
+    }
+
+    .feature-description {
+        color: #718096;
+        line-height: 1.6;
+    }
+
+    @media (max-width: 768px) {
+        .auth-section {
+            grid-template-columns: 1fr;
+        }
+        
+        .hero-section {
+            height: 60vh;
+        }
+        
+        .text-overlay {
+            font-size: 2rem;
+        }
+        
+        .scene-title {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+
+<div class="hero-section">
+    <div class="video-container">
+        <!-- Scene 1: University Dean -->
+        <div class="scene scene-1 active">
+            <div class="scene-title">القيادة في التعليم</div>
+            <div class="character dean">🎓</div>
+            <div class="text-overlay">قيادة رؤيوية</div>
+            <div class="inspirational-text">"معاً نبني المستقبل"</div>
+        </div>
+
+        <!-- Scene 2: Department Head -->
+        <div class="scene scene-2">
+            <div class="scene-title">التميز الأكاديمي</div>
+            <div class="character head">👨‍💼</div>
+            <div class="text-overlay">الابتكار الاستراتيجي</div>
+            <div class="inspirational-text">"من القيادة إلى التعلم، الرحلة مستمرة"</div>
+        </div>
+
+        <!-- Scene 3: Teacher -->
+        <div class="scene scene-3">
+            <div class="scene-title">التدريس بشغف</div>
+            <div class="character teacher">👩‍🏫</div>
+            <div class="text-overlay">إلهام العقول</div>
+            <div class="inspirational-text">"تمكين المعلمين، إلهام الطلاب"</div>
+        </div>
+
+        <!-- Scene 4: Students -->
+        <div class="scene scene-4">
+            <div class="scene-title">قادة المستقبل</div>
+            <div class="character students">👨‍🎓👩‍🎓👨‍🎓</div>
+            <div class="text-overlay">مستقبل مشرق</div>
+            <div class="inspirational-text">"المستقبل في أيدٍ أمينة"</div>
+        </div>
+
+        <div class="progress-bar" id="progressBar"></div>
+
+        <div class="controls">
+            <button class="control-btn" onclick="previousScene()">← السابق</button>
+            <button class="control-btn" onclick="togglePlay()" id="playBtn">⏸️ إيقاف</button>
+            <button class="control-btn" onclick="nextScene()">التالي →</button>
+            <button class="control-btn" onclick="restart()">🔄 إعادة</button>
+        </div>
+    </div>
+</div>
+
+{% if not session.user %}
+<div class="auth-section">
+    <!-- تسجيل مستخدم جديد -->
+    <div class="auth-card">
+        <h2 class="auth-title">🎓 تسجيل مستخدم جديد</h2>
+        <form method="POST" action="{{ url_for('register') }}">
+            <div class="form-group">
+                <label class="form-label">الاسم الكامل</label>
+                <input type="text" name="name" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">الدور</label>
+                <select name="role" class="form-control" required>
+                    <option value="">اختر الدور</option>
+                    <option value="عميد">عميد الكلية</option>
+                    <option value="رئيس قسم">رئيس القسم</option>
+                    <option value="معلم">معلم</option>
+                    <option value="طالب">طالب</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">القسم</label>
+                <input type="text" name="department" class="form-control" placeholder="مثال: قسم علوم الحاسب">
+            </div>
+            <div class="form-group">
+                <label class="form-label">البريد الإلكتروني</label>
+                <input type="email" name="email" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">رقم الهاتف</label>
+                <input type="tel" name="phone" class="form-control" placeholder="05xxxxxxxx">
+            </div>
+            <div class="form-group">
+                <label class="form-label">كلمة المرور</label>
+                <input type="password" name="password" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-success" style="width: 100%;">تسجيل حساب جديد</button>
+        </form>
+    </div>
+
+    <!-- تسجيل الدخول -->
+    <div class="auth-card">
+        <h2 class="auth-title">🔐 تسجيل الدخول</h2>
+        <form method="POST" action="{{ url_for('login') }}">
+            <div class="form-group">
+                <label class="form-label">البريد الإلكتروني</label>
+                <input type="email" name="email" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">كلمة المرور</label>
+                <input type="password" name="password" class="form-control" required>
+            </div>
+            <button type="submit" class="btn" style="width: 100%;">دخول</button>
+        </form>
+        
+        <div style="margin-top: 2rem; padding: 1rem; background: #f7fafc; border-radius: 10px;">
+            <h4 style="color: #4a5568; margin-bottom: 1rem;">حسابات تجريبية:</h4>
+            <p><strong>العميد:</strong> dean@university.edu / dean123</p>
+            <p><strong>رئيس القسم:</strong> head@university.edu / head123</p>
+            <p><strong>المعلم:</strong> teacher@university.edu / teacher123</p>
+            <p><strong>الطالب:</strong> student@university.edu / student123</p>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="features-grid">
+    <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3 class="feature-title">إدارة شاملة</h3>
+        <p class="feature-description">نظام متكامل لإدارة الإعلانات والمستخدمين مع صلاحيات متدرجة حسب الدور</p>
+    </div>
+    
+    <div class="feature-card">
+        <div class="feature-icon">🔒</div>
+        <h3 class="feature-title">أمان عالي</h3>
+        <p class="feature-description">حماية البيانات وتشفير كلمات المرور مع نظام مصادقة آمن</p>
+    </div>
+    
+    <div class="feature-card">
+        <div class="feature-icon">📱</div>
+        <h3 class="feature-title">تصميم متجاوب</h3>
+        <p class="feature-description">واجهة مستخدم حديثة تعمل على جميع الأجهزة والشاشات</p>
+    </div>
+    
+    <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3 class="feature-title">أداء سريع</h3>
+        <p class="feature-description">قاعدة بيانات محسنة وتحميل سريع للصفحات</p>
+    </div>
+</div>
+
+<script>
+    let currentScene = 0;
+    let isPlaying = true;
+    let sceneInterval;
+    const scenes = document.querySelectorAll('.scene');
+    const totalScenes = scenes.length;
+
+    function showScene(index) {
+        scenes.forEach((scene, i) => {
+            scene.classList.toggle('active', i === index);
+        });
+        
+        const progress = ((index + 1) / totalScenes) * 100;
+        document.getElementById('progressBar').style.width = progress + '%';
+    }
+
+    function nextScene() {
+        currentScene = (currentScene + 1) % totalScenes;
+        showScene(currentScene);
+    }
+
+    function previousScene() {
+        currentScene = (currentScene - 1 + totalScenes) % totalScenes;
+        showScene(currentScene);
+    }
+
+    function togglePlay() {
+        const playBtn = document.getElementById('playBtn');
+        if (isPlaying) {
+            clearInterval(sceneInterval);
+            playBtn.textContent = '▶️ تشغيل';
+            isPlaying = false;
+        } else {
+            startAutoPlay();
+            playBtn.textContent = '⏸️ إيقاف';
+            isPlaying = true;
+        }
+    }
+
+    function restart() {
+        currentScene = 0;
+        showScene(currentScene);
+        if (isPlaying) {
+            clearInterval(sceneInterval);
+            startAutoPlay();
+        }
+    }
+
+    function startAutoPlay() {
+        sceneInterval = setInterval(() => {
+            nextScene();
+        }, 6000);
+    }
+
+    // تهيئة العرض
+    showScene(0);
+    startAutoPlay();
+
+    // دعم لوحة المفاتيح
+    document.addEventListener('keydown', (e) => {
+        switch(e.key) {
+            case 'ArrowRight':
+            case ' ':
+                e.preventDefault();
+                nextScene();
+                break;
+            case 'ArrowLeft':
+                e.preventDefault();
+                previousScene();
+                break;
+            case 'p':
+            case 'P':
+                e.preventDefault();
+                togglePlay();
+                break;
+        }
+    });
+
+    // دعم اللمس للهواتف
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    document.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+    });
+
+    document.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        const diff = touchStartX - touchEndX;
+        const swipeThreshold = 50;
+        
+        if (Math.abs(diff) > swipeThreshold) {
+            if (diff > 0) {
+                nextScene();
+            } else {
+                previousScene();
+            }
+        }
+    });
+</script>
+{% endblock %}
